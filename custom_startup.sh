@@ -5,30 +5,32 @@ exec > /var/log/custom_startup.log 2>&1
 set -x  # Enable command tracing for debugging
 
 echo "DEBUG: Custom On-start Script execution started at $(date)"
-echo "DEBUG: Environment variables at script start:" >> /var/log/custom_startup.log
-env >> /var/log/custom_startup.log  # Log all environment variables
+
+# Ensure /workspace/ directory exists (MUST COME FIRST)
+echo "DEBUG: Checking /workspace/ directory..."
+if [ ! -d "/workspace/" ]; then
+    echo "DEBUG: /workspace/ directory does not exist. Creating it now..."
+    mkdir -p /workspace/
+    chmod 777 /workspace/
+else
+    echo "DEBUG: /workspace/ directory already exists."
+fi
 
 # Step 1: Initialize environment
 echo "DEBUG: Initializing environment..."
 /opt/ai-dock/bin/init.sh || echo "WARNING: init.sh failed!"
 
-# Step 1a: Ensure /workspace/ directory exists
-if [ ! -d "/workspace/" ]; then
-    echo "DEBUG: Creating /workspace/ directory..."
-    mkdir -p /workspace/
-    chmod 777 /workspace/
-fi
-
 # Step 2: Install rclone
 echo "DEBUG: Installing rclone..."
 curl https://rclone.org/install.sh | bash || echo "ERROR: rclone installation failed!"
 
-# Step 3: Create rclone configuration directory
-echo "DEBUG: Creating rclone configuration directory..."
-mkdir -p /root/.config/rclone
+# Step 3: Verify Rclone
+echo "DEBUG: Verifying Rclone binary..."
+rclone version || echo "ERROR: Rclone not installed or accessible!"
 
 # Step 4: Create rclone.conf if not already present
 echo "DEBUG: Checking for existing rclone configuration..."
+mkdir -p /root/.config/rclone
 if [ ! -f /root/.config/rclone/rclone.conf ]; then
     echo "DEBUG: Creating new rclone configuration file..."
     if [ -z "$DROPBOX_TOKEN" ]; then
@@ -44,15 +46,11 @@ else
     echo "DEBUG: rclone.conf already exists. Skipping creation."
 fi
 
-# Step 5: Verify rclone configuration
-echo "DEBUG: Verifying rclone configuration..."
-rclone config show || echo "ERROR: rclone configuration verification failed!"
+# Step 5: Perform initial sync from Dropbox to server
+echo "DEBUG: Starting Rclone sync..."
+rclone sync "dropbox:/Apps/Miyuki's Vast.ai/home" /workspace/kohya_ss/home || echo "ERROR: Rclone sync failed!"
 
-# Step 6: Perform initial sync from Dropbox to server
-echo "DEBUG: Starting initial sync from Dropbox to /workspace/kohya_ss/home..."
-rclone sync "dropbox:/Apps/Miyuki's Vast.ai/home" /workspace/kohya_ss/home || echo "ERROR: rclone sync failed!"
-
-# Step 7: Set permissions for the kohya_ss directory
+# Step 6: Set permissions for the kohya_ss directory
 echo "DEBUG: Setting permissions for /workspace/kohya_ss..."
 chmod 777 -R /workspace/kohya_ss || echo "ERROR: Failed to set permissions!"
 echo "DEBUG: Permissions updated for /workspace/kohya_ss."
