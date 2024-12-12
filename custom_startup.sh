@@ -12,6 +12,13 @@ env >> /var/log/custom_startup.log  # Log all environment variables
 echo "DEBUG: Initializing environment..."
 /opt/ai-dock/bin/init.sh || echo "WARNING: init.sh failed!"
 
+# Step 1a: Ensure /workspace/ directory exists
+if [ ! -d "/workspace/" ]; then
+    echo "DEBUG: Creating /workspace/ directory..."
+    mkdir -p /workspace/
+    chmod 777 /workspace/
+fi
+
 # Step 2: Install rclone
 echo "DEBUG: Installing rclone..."
 curl https://rclone.org/install.sh | bash || echo "ERROR: rclone installation failed!"
