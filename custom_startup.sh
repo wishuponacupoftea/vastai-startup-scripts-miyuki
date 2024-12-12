@@ -27,7 +27,7 @@ fi
 
 # Start Rclone transfer in the background
 echo "DEBUG: Starting Rclone transfer in the background..."
-rclone --config /root/.config/rclone/rclone.conf copy dropbox: /workspace/kohya_ss/cloud --ignore-existing &
+rclone --config /root/.config/rclone/rclone.conf copy dropbox: /workspace/kohya_ss/0_cloud --ignore-existing &
 RCLONE_PID=$!
 
 # Start environment initialization in the background
