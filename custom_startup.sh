@@ -25,12 +25,6 @@ else
     echo "DEBUG: Rclone configuration already exists."
 fi
 
-# Initialize environment in a subshell
-set +e
-echo "DEBUG: Initializing environment..."
-set -e
-(/opt/ai-dock/bin/init.sh) || echo "WARNING: init.sh failed!"
-
 # Perform Rclone sync
 echo "DEBUG: Preparing to perform Rclone sync..."
 if command -v rclone &> /dev/null; then
@@ -41,13 +35,10 @@ else
 fi
 echo "DEBUG: Rclone sync completed."
 
+# Initialize environment
+echo "DEBUG: Initializing environment..."
+(set +e; /opt/ai-dock/bin/init.sh; set -e) || echo "WARNING: init.sh failed!"
+echo "DEBUG: Environment initialization completed. Continuing script..."
 
-# Set permissions
-echo "DEBUG: Setting permissions for /workspace/kohya_ss..."
-chmod 777 -R /workspace/kohya_ss || echo "ERROR: Failed to set permissions!"
-
-echo "DEBUG: Custom On-start Script execution completed at $(date)"
-
-# Final Debug Statement
-
+# Final debug
 echo "DEBUG: Custom On-start Script execution completed at $(date)"
