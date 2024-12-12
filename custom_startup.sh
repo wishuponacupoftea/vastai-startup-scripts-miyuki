@@ -1,6 +1,8 @@
 #!/bin/bash
 
-set -e
+exec > /var/log/custom_startup.log 2>&1
+set -e  # Exit immediately on error
+set -x  # Enable command tracing for debugging
 
 echo "DEBUG: Custom On-start Script execution started at $(date)"
 
