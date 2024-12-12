@@ -26,15 +26,28 @@ else
 fi
 
 # Initialize environment in a subshell
+set +e
 echo "DEBUG: Initializing environment..."
+set -e
 (/opt/ai-dock/bin/init.sh) || echo "WARNING: init.sh failed!"
 
 # Perform Rclone sync
-echo "DEBUG: Starting Rclone sync..."
-rclone sync "dropbox:/Apps/Miyuki's Vast.ai/home" /workspace/kohya_ss/home || echo "ERROR: Rclone sync failed!"
+echo "DEBUG: Preparing to perform Rclone sync..."
+if command -v rclone &> /dev/null; then
+    echo "DEBUG: Rclone is installed. Starting sync..."
+    rclone sync "dropbox:/Apps/Miyuki's Vast.ai/home" /workspace/kohya_ss/home || echo "ERROR: Rclone sync failed!"
+else
+    echo "ERROR: Rclone is not installed or not found in PATH."
+fi
+echo "DEBUG: Rclone sync completed."
+
 
 # Set permissions
 echo "DEBUG: Setting permissions for /workspace/kohya_ss..."
 chmod 777 -R /workspace/kohya_ss || echo "ERROR: Failed to set permissions!"
+
+echo "DEBUG: Custom On-start Script execution completed at $(date)"
+
+# Final Debug Statement
 
 echo "DEBUG: Custom On-start Script execution completed at $(date)"
