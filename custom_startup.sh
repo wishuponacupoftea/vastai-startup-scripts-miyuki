@@ -19,8 +19,10 @@ if [ ! -f /root/.config/rclone/rclone.conf ]; then
     cat <<EOF > /root/.config/rclone/rclone.conf
 [dropbox]
 type = dropbox
-token = {"access_token":"your-access-token-here","token_type":"bearer","expiry":"0001-01-01T00:00:00Z"}
+token = {"access_token":"$DROPBOX_TOKEN","token_type":"bearer","expiry":"0001-01-01T00:00:00Z"}
 EOF
+else
+    echo "DEBUG: Rclone configuration file already exists."
 fi
 
 # Start Rclone transfer in the background
