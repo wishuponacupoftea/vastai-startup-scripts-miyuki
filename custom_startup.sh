@@ -29,7 +29,7 @@ fi
 echo "DEBUG: Preparing to perform Rclone sync..."
 if command -v rclone &> /dev/null; then
     echo "DEBUG: Rclone is installed. Starting sync..."
-    rclone sync "dropbox:/Apps/VastAI_Miyuki/home2" /workspace/kohya_ss/home || echo "ERROR: Rclone sync failed!"
+    rclone sync "dropbox:" /workspace/kohya_ss || echo "ERROR: Rclone sync failed!"
 else
     echo "ERROR: Rclone is not installed or not found in PATH."
 fi
