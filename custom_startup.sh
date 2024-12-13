@@ -33,8 +33,6 @@ function init_main() {
     rm /run/workspace_sync
     init_source_preflight_scripts > /var/log/preflight.log 2>&1
     init_debug_print > /var/log/debug.log 2>&1
-    init_get_provisioning_script > /var/log/provisioning.log 2>&1
-    init_run_provisioning_script >> /var/log/provisioning.log 2>&1
     # Removal of this file will trigger fastapi placeholder shutdown and service start
     rm /run/container_config
 	
@@ -85,6 +83,13 @@ EOF
 	fi
 
 	echo "DEBUG: All tasks completed."
+	
+	# END OF MY STUFF
+	
+	# RUN PROVISIONING
+	
+	init_get_provisioning_script > /var/log/provisioning.log 2>&1
+    init_run_provisioning_script >> /var/log/provisioning.log 2>&1
 	
     printf "Init complete: %s\n" "$(date +"%x %T.%3N")" >> /var/log/timing_data
     # Don't exit unless supervisord is killed
