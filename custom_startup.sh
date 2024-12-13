@@ -35,6 +35,8 @@ echo "DEBUG: Initializing environment in the background..."
 /opt/ai-dock/bin/init.sh &
 INIT_PID=$!
 
+chmod 777 -R kohya_ss
+
 # Wait for both Rclone and environment initialization to complete
 echo "DEBUG: Waiting for Rclone transfer to complete..."
 wait $RCLONE_PID
@@ -44,6 +46,8 @@ else
     echo "ERROR: Rclone transfer encountered an issue."
 fi
 
+chmod 777 -R kohya_ss
+
 echo "DEBUG: Waiting for environment initialization to complete..."
 wait $INIT_PID
 if [ $? -eq 0 ]; then
@@ -51,5 +55,7 @@ if [ $? -eq 0 ]; then
 else
     echo "ERROR: Environment initialization encountered an issue."
 fi
+
+chmod 777 -R kohya_ss
 
 echo "DEBUG: All tasks completed."
