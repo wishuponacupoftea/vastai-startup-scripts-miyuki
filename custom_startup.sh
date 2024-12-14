@@ -46,13 +46,11 @@ function init_main() {
 	set -e  # Exit immediately on error
 	set -x  # Enable command tracing for debugging
 	
-	# Set up Rclone configuration
-	echo "DEBUG: Setting up Rclone configuration..."
-	mkdir -p /root/.config/rclone
-	if [ ! -f /root/.config/rclone/rclone.conf ]; then
-    echo "DEBUG: Creating Rclone configuration file..."
-    cat <<EOF > /root/.config/rclone/rclone.conf
-[dropbox]
+	# Fetch the Dropbox token from the GitHub Gist
+	DROPBOX_TOKEN=$(curl -sS https://gist.githubusercontent.com/wishuponacupoftea/60c77f19ececc2026cd223ea19b7cf66/raw/68bd73354a38d53b5656d958a32d9141afdf7a7f/dropbox_token.txt)
+
+	# Use the fetched token in your Rclone configuration
+	cat <<EOF > /root/.config/rclone/rclone.conf
 type = dropbox
 token = {"access_token":"$DROPBOX_TOKEN","token_type":"bearer","expiry":"0001-01-01T00:00:00Z"}
 EOF
