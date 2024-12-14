@@ -47,9 +47,26 @@ function init_main() {
 	set -e  # Exit immediately on error
 	set -x  # Enable command tracing for debugging
 	
-	# Fetch the Dropbox token from the GitHub Gist
-	DROPBOX_TOKEN=$(curl -sS https://gist.githubusercontent.com/wishuponacupoftea/60c77f19ececc2026cd223ea19b7cf66/raw/68bd73354a38d53b5656d958a32d9141afdf7a7f/dropbox_token.txt)
-	
+	# Define your Gist ID
+	GIST_ID="60c77f19ececc2026cd223ea19b7cf66"
+
+	# Fetch the latest revision ID from the Gist metadata
+	REVISION_ID=$(curl -s https://api.github.com/gists/$GIST_ID | grep '"version":' | head -n 1 | awk -F'"' '{print $4}')
+
+	# Check if the revision ID was fetched successfully
+	if [ -z "$REVISION_ID" ]; then
+		echo "ERROR: Failed to fetch the latest revision ID. Exiting."
+		exit 1
+	fi
+
+	echo "DEBUG: Latest revision ID: $REVISION_ID"
+
+	# Construct the RAW URL using the latest revision ID
+	RAW_URL="https://gist.githubusercontent.com/wishuponacupoftea/$GIST_ID/raw/$REVISION_ID/dropbox_token.txt"
+
+	# Fetch the Dropbox token from the constructed RAW URL
+	DROPBOX_TOKEN=$(curl -s "$RAW_URL")
+
 	# Check if the token was successfully fetched
 	if [ -z "$DROPBOX_TOKEN" ]; then
 		echo "ERROR: Failed to fetch Dropbox token. Exiting."
