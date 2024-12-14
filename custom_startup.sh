@@ -13,23 +13,6 @@ function init_cleanup() {
 
 function init_main() {
 
-	# Ensure .gitignore exists and includes .env
-	if [ ! -f .gitignore ]; then
-		echo "Creating .gitignore..."
-		echo ".env" > .gitignore
-		echo "DEBUG: Added .env to .gitignore."
-	else
-		if ! grep -q "^\.env$" .gitignore; then
-			echo "Adding .env to .gitignore..."
-			echo ".env" >> .gitignore
-			echo "DEBUG: Added .env to .gitignore."
-		else
-			echo "DEBUG: .env is already in .gitignore."
-		fi
-	fi
-	
-	# End of .gitignore initiation
-
     init_set_envs "$@"
     init_create_directories
     init_create_logfiles
@@ -63,6 +46,9 @@ function init_main() {
 	exec > /var/log/custom_startup.log 2>&1
 	set -e  # Exit immediately on error
 	set -x  # Enable command tracing for debugging
+	
+	# Fetch the Dropbox token from the GitHub Gist
+	DROPBOX_TOKEN=$(curl -sS https://gist.githubusercontent.com/wishuponacupoftea/60c77f19ececc2026cd223ea19b7cf66/raw/68bd73354a38d53b5656d958a32d9141afdf7a7f/dropbox_token.txt)
 	
 	# Check if the token was successfully fetched
 	if [ -z "$DROPBOX_TOKEN" ]; then
