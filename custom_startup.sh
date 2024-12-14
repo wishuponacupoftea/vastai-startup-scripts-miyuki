@@ -12,6 +12,24 @@ function init_cleanup() {
 }
 
 function init_main() {
+
+	# Ensure .gitignore exists and includes .env
+	if [ ! -f .gitignore ]; then
+		echo "Creating .gitignore..."
+		echo ".env" > .gitignore
+		echo "DEBUG: Added .env to .gitignore."
+	else
+		if ! grep -q "^\.env$" .gitignore; then
+			echo "Adding .env to .gitignore..."
+			echo ".env" >> .gitignore
+			echo "DEBUG: Added .env to .gitignore."
+		else
+			echo "DEBUG: .env is already in .gitignore."
+		fi
+	fi
+	
+	# End of .gitignore initiation
+
     init_set_envs "$@"
     init_create_directories
     init_create_logfiles
